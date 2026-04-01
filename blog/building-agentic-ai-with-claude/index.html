@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Building Agentic AI Workflows with Anthropic Claude — Arun Kataria</title>
+<meta name="description" content="How I designed autonomous multi-step tax-filing pipelines at Intuit using Claude Sonnet — architecture, prompt design, and lessons learned."/>
+<meta property="og:title" content="Building Agentic AI Workflows with Anthropic Claude"/>
+<meta property="og:description" content="How I designed autonomous multi-step tax-filing pipelines at Intuit using Claude Sonnet."/>
+<meta property="og:url" content="https://arunkataria.in/blog/building-agentic-ai-with-claude/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:author" content="Arun Kataria"/>
+<meta property="article:published_time" content="2024-12-20"/>
+<link rel="canonical" href="https://arunkataria.in/blog/building-agentic-ai-with-claude/"/>
+<meta name="theme-color" content="#050810"/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YZ8VKY1WNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-YZ8VKY1WNS');</script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#050810;--border:rgba(99,130,255,0.15);--accent:#6382ff;--accent2:#a78bfa;--cyan:#22d3ee;--green:#34d399;--text:#e8ecff;--muted:#7b84a3;--card:rgba(13,18,32,0.8)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--cyan));width:0%;z-index:999;transition:width .1s}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(5,8,16,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.5px;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);font-size:13px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff!important;padding:8px 20px;border-radius:6px;font-size:13px!important;font-weight:600!important;transition:opacity .2s,transform .2s}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
+.post-hero{background:linear-gradient(135deg,#1a0f2e,#2d1b4e);padding:64px 48px;text-align:center}
+.post-emoji{font-size:64px;margin-bottom:16px}
+.post-tag{display:inline-block;background:rgba(204,155,122,0.15);color:#CC9B7A;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:4px 14px;border-radius:4px;margin-bottom:16px}
+.post-title{font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,40px);font-weight:800;letter-spacing:-1.5px;line-height:1.15;color:#f8fafc;max-width:720px;margin:0 auto 20px}
+.post-meta{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.post-meta .author{display:flex;align-items:center;gap:8px}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.post-wrap{max-width:720px;margin:0 auto;padding:52px 24px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;margin-bottom:36px;transition:color .2s}
+.back-link:hover{color:var(--accent)}
+.post-wrap h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:#f8fafc;margin:40px 0 12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.post-wrap h3{font-size:17px;font-weight:600;color:var(--text);margin:28px 0 10px}
+.post-wrap p{color:#cbd5e1;margin-bottom:18px;font-size:15px;line-height:1.75}
+.post-wrap ul,.post-wrap ol{padding-left:22px;margin-bottom:18px;color:#cbd5e1;font-size:15px}
+.post-wrap li{margin-bottom:8px;line-height:1.7}
+.post-wrap strong{color:#f1f5f9}
+.callout{border-radius:10px;padding:16px 20px;margin:28px 0;font-size:14px;line-height:1.65}
+.callout.tip{background:rgba(99,130,255,0.08);border-left:3px solid var(--accent);color:#a5b4fc}
+.callout.success{background:rgba(52,211,153,0.08);border-left:3px solid var(--green);color:#6ee7b7}
+.callout.warning{background:rgba(251,191,36,0.08);border-left:3px solid #fbbf24;color:#fde68a}
+.callout strong{display:block;margin-bottom:6px;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+.table-wrap{overflow-x:auto;margin:28px 0;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:rgba(13,18,32,0.9);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;border-bottom:1px solid rgba(99,130,255,0.07);color:#cbd5e1}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(99,130,255,0.04)}
+pre{background:rgba(13,18,32,0.95);border:1px solid var(--border);border-radius:10px;padding:20px;margin:24px 0;overflow-x:auto}
+code{font-family:'Courier New',monospace;font-size:13px;color:#86efac;line-height:1.6}
+p code,li code{background:rgba(13,18,32,0.9);color:#86efac;padding:2px 7px;border-radius:4px;font-size:13px}
+.share-box{background:var(--card);border-radius:12px;padding:28px;margin:48px 0;border:1px solid var(--border);text-align:center}
+.share-box h3{font-family:'Syne',sans-serif;font-size:18px;margin-bottom:8px;color:#f8fafc}
+.share-box p{color:var(--muted);font-size:13px;margin-bottom:20px}
+.share-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.share-btn{padding:9px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:opacity .2s;font-family:'DM Sans',sans-serif}
+.share-btn:hover{opacity:.85}
+.related{margin-top:52px}
+.related h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#f8fafc;margin-bottom:18px;border-bottom:none;padding-bottom:0}
+.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.related-card{background:var(--card);border-radius:10px;padding:18px;border:1px solid var(--border);transition:border-color .2s,transform .2s;display:flex;flex-direction:column;gap:6px}
+.related-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.related-emoji{font-size:26px}
+.related-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.4}
+.related-read{font-size:11px;color:var(--muted)}
+.disclaimer{background:var(--card);border-radius:8px;padding:14px 18px;margin:32px 0;border:1px solid rgba(251,191,36,.2);font-size:12px;color:var(--muted);line-height:1.6}
+.disclaimer b{color:#fbbf24}
+footer{padding:24px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted)}
+footer a{color:var(--accent)}
+@media(max-width:768px){nav{padding:16px 20px}.nav-links{display:none}.post-hero{padding:48px 20px}.post-wrap{padding:36px 20px 60px}.related-grid{grid-template-columns:1fr}footer{flex-direction:column;gap:8px;text-align:center;padding:20px}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav>
+  <a class="nav-logo" href="/">AK</a>
+  <ul class="nav-links">
+    <li><a href="/#ai-models">AI Models</a></li>
+    <li><a href="/#skills">Skills</a></li>
+    <li><a href="/#experience">Experience</a></li>
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="/#contact" class="nav-cta">Hire Me</a></li>
+  </ul>
+</nav>
+
+<div class="post-hero">
+  <div class="post-emoji">🤖</div>
+  <div class="post-tag">AI Engineering</div>
+  <h1 class="post-title">Building Agentic AI Workflows with Anthropic Claude</h1>
+  <div class="post-meta">
+    <div class="author"><div class="avatar">AK</div>Arun Kataria</div>
+    <span>📅 December 20, 2024</span>
+    <span>⏱ 7 min read</span>
+  </div>
+</div>
+
+<div class="post-wrap">
+  <a class="back-link" href="/blog/">← Back to all posts</a>
+
+  <p>At Intuit, I was tasked with reducing the manual effort involved in tax filing workflows. The solution? Build an agentic AI system powered by Anthropic Claude that could autonomously handle multi-step reasoning — asking questions, interpreting documents, and making filing decisions.</p>
+  <p>Here's exactly how I built it, what worked, and what I'd do differently.</p>
+
+  <div class="callout success"><strong>✅ What you'll learn</strong>How to architect an agentic AI pipeline with Claude, design prompts for multi-step tax workflows, handle tool use and retries, and keep costs under control in production.</div>
+
+  <h2>What is an Agentic AI Workflow?</h2>
+  <p>A standard LLM interaction is stateless — you send a prompt, you get a response. An <strong>agentic workflow</strong> is different. The model is given tools, memory, and a goal — and it figures out the steps to achieve it autonomously.</p>
+  <p>In our case, the goal was: <em>given a user's tax documents and financial situation, determine the optimal filing strategy and pre-fill their return.</em></p>
+
+  <h2>System Architecture</h2>
+  <h3>The Three Layers</h3>
+  <ul>
+    <li><strong>Orchestration Layer</strong> — Java Spring Boot 21 service that manages session state, tool registry, and conversation history</li>
+    <li><strong>Claude Integration Layer</strong> — Wraps Anthropic API calls, handles retries, token budgets, and streaming</li>
+    <li><strong>Tool Layer</strong> — Set of callable functions: fetch W2 data, calculate deductions, validate IRS rules, call filing APIs</li>
+  </ul>
+
+  <div class="callout tip"><strong>💡 Architecture tip</strong>Keep your orchestration layer language-agnostic from Claude. This lets you swap models (Claude → GPT-4) without rewriting business logic. We used an interface pattern in Spring Boot for this.</div>
+
+  <h2>Prompt Design for Multi-Step Reasoning</h2>
+  <p>The most critical part of an agentic system is the system prompt. Here's a simplified version of ours:</p>
+  <pre><code>You are a tax filing assistant for TurboTax. Your job is to help
+users complete their federal tax return accurately.
+
+You have access to the following tools:
+- get_user_documents(userId): Fetch uploaded W2, 1099, receipts
+- calculate_deduction(type, amount): Compute deduction eligibility
+- validate_filing_rule(rule_id, context): Check IRS compliance
+- submit_draft_return(data): Save progress
+
+Rules:
+1. Always verify document data before making calculations
+2. Never guess — if data is missing, call get_user_documents first
+3. Explain each decision to the user in plain language
+4. If confidence < 80%, ask a clarifying question before proceeding</code></pre>
+
+  <h3>Tool Use with Claude</h3>
+  <p>Claude's tool use feature was the core of the agentic loop. When Claude decides it needs to call a tool, it returns a structured JSON response that our orchestrator executes:</p>
+  <pre><code>// Spring Boot tool dispatcher (simplified)
+public String dispatchTool(String toolName, JsonNode input) {
+  return switch (toolName) {
+    case "get_user_documents" -> documentService.fetch(input.get("userId").asText());
+    case "calculate_deduction" -> deductionEngine.calculate(input);
+    case "validate_filing_rule" -> irsRuleValidator.check(input);
+    default -> throw new UnknownToolException(toolName);
+  };
+}</code></pre>
+
+  <h2>Handling the Agentic Loop</h2>
+  <p>The loop runs until Claude either completes the filing or asks the user a question it can't answer itself:</p>
+  <ol>
+    <li>Send user context + conversation history to Claude</li>
+    <li>Claude responds — either with tool calls or a user-facing message</li>
+    <li>If tool calls: execute, append results, loop back to step 1</li>
+    <li>If user message: stream to frontend, wait for user input</li>
+    <li>Repeat until filing is complete or max iterations reached</li>
+  </ol>
+
+  <div class="callout warning"><strong>⚠️ Always set a max iteration limit</strong>Without one, a poorly prompted agent can loop indefinitely — burning tokens and money. We set max 12 iterations per session and logged anything that hit the limit for manual review.</div>
+
+  <h2>Results</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Metric</th><th>Before</th><th>After</th><th>Improvement</th></tr></thead>
+      <tbody>
+        <tr><td>Manual review time per return</td><td>18 min</td><td>4 min</td><td style="color:#34d399">78% reduction</td></tr>
+        <tr><td>Filing accuracy</td><td>91%</td><td>97%</td><td style="color:#34d399">+6%</td></tr>
+        <tr><td>User drop-off rate</td><td>34%</td><td>21%</td><td style="color:#34d399">38% reduction</td></tr>
+        <tr><td>Avg tokens per session</td><td>—</td><td>~4,200</td><td style="color:#94a3b8">Baseline</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Key Lessons</h2>
+  <ul>
+    <li><strong>Smaller, focused tools beat large ones</strong> — Claude calls tools more reliably when each does exactly one thing</li>
+    <li><strong>Include confidence in your prompt</strong> — Asking Claude to express uncertainty prevents silent errors in production</li>
+    <li><strong>Cache tool results aggressively</strong> — Document fetches are expensive; cache them per session to cut API costs</li>
+    <li><strong>Log every tool call</strong> — Essential for debugging when the agent makes unexpected decisions</li>
+    <li><strong>Use claude-sonnet for cost efficiency</strong> — claude-opus is smarter but 5× the cost; sonnet handled 95% of our cases perfectly</li>
+  </ul>
+
+  <div class="disclaimer"><b>Note: </b>Code examples are simplified for clarity and don't represent Intuit's actual implementation. Architecture patterns are based on general agentic AI design principles.</div>
+
+  <div class="share-box">
+    <h3>Found this useful?</h3>
+    <p>Share it with someone building AI systems 👇</p>
+    <div class="share-btns">
+      <button class="share-btn" style="background:#25d366;color:#fff" onclick="shareWA()">💬 WhatsApp</button>
+      <button class="share-btn" style="background:#1da1f2;color:#fff" onclick="shareTW()">🐦 Twitter</button>
+      <button class="share-btn" style="background:#0077b5;color:#fff" onclick="shareLI()">💼 LinkedIn</button>
+      <button class="share-btn" style="background:#334155;color:#e2e8f0" onclick="copyLink()">🔗 Copy Link</button>
+    </div>
+  </div>
+
+  <div class="related">
+    <h2>Related Posts</h2>
+    <div class="related-grid">
+      <a href="/blog/llm-prompt-engineering-tips/"><div class="related-card"><div class="related-emoji">✍️</div><div class="related-title">10 Prompt Engineering Tips for Production LLM Systems</div><div class="related-read">⏱ 5 min read</div></div></a>
+      <a href="/blog/micro-frontend-at-scale/"><div class="related-card"><div class="related-emoji">🏗️</div><div class="related-title">Micro Frontend Architecture at Scale</div><div class="related-read">⏱ 6 min read</div></div></a>
+      <a href="/blog/java-spring-boot-21-features/"><div class="related-card"><div class="related-emoji">☕</div><div class="related-title">Java Spring Boot 21 Features I Use Daily</div><div class="related-read">⏱ 8 min read</div></div></a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>© 2025 Arun Kataria · <a href="/">Portfolio</a> · <a href="/blog/">Blog</a></div>
+  <div>Built with HTML · CSS · JS · GitHub Pages</div>
+</footer>
+<script>
+window.addEventListener('scroll',()=>{const d=document.documentElement;document.getElementById('progress').style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+'%';});
+const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);
+function shareWA(){window.open('https://wa.me/?text='+t+'%20'+u,'_blank')}
+function shareTW(){window.open('https://twitter.com/intent/tweet?text='+t+'&url='+u,'_blank')}
+function shareLI(){window.open('https://www.linkedin.com/sharing/share-offsite/?url='+u,'_blank')}
+function copyLink(){navigator.clipboard.writeText(location.href);alert('Link copied!');}
+</script>
+</body>
+</html>
