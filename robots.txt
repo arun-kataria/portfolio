@@ -1,0 +1,8 @@
+# robots.txt — arunkataria.in
+# Allow all search engine crawlers
+
+User-agent: *
+Allow: /
+
+# Sitemap location — tells Google where to find all your URLs
+Sitemap: https://arunkataria.in/sitemap.xml
