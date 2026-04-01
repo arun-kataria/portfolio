@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Blog — Arun Kataria | Full Stack & AI Engineer</title>
+<meta name="description" content="Articles on AI engineering, LLM systems, micro frontends, Java Spring Boot and full stack architecture by Arun Kataria."/>
+<meta property="og:title" content="Blog — Arun Kataria"/>
+<meta property="og:description" content="Articles on AI engineering, LLM systems, micro frontends and full stack architecture."/>
+<meta property="og:url" content="https://arunkataria.in/blog/"/>
+<meta property="og:type" content="website"/>
+<link rel="canonical" href="https://arunkataria.in/blog/"/>
+<meta name="theme-color" content="#050810"/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YZ8VKY1WNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-YZ8VKY1WNS');</script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#050810;--bg2:#090d1a;--surface:#0d1220;--border:rgba(99,130,255,0.15);--accent:#6382ff;--accent2:#a78bfa;--cyan:#22d3ee;--green:#34d399;--text:#e8ecff;--muted:#7b84a3;--card:rgba(13,18,32,0.8)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(5,8,16,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.5px;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);font-size:13px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-links a.active{color:var(--accent)}
+.nav-cta{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff!important;padding:8px 20px;border-radius:6px;font-size:13px!important;font-weight:600!important;transition:opacity .2s,transform .2s}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
+
+.hero{padding:72px 48px 48px;max-width:1140px;margin:0 auto}
+.section-tag{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:16px}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--muted);font-size:16px;max-width:520px;line-height:1.7}
+
+.filters{display:flex;gap:10px;flex-wrap:wrap;padding:0 48px 36px;max-width:1140px;margin:0 auto}
+.filter-btn{padding:7px 18px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;font-family:'DM Sans',sans-serif}
+.filter-btn:hover,.filter-btn.active{background:rgba(99,130,255,0.12);border-color:var(--accent);color:var(--text)}
+
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1140px;margin:0 auto;padding:0 48px 80px}
+.blog-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .3s,transform .3s,box-shadow .3s;position:relative}
+.blog-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,0.4)}
+.blog-card.featured{grid-column:span 2}
+
+.card-thumb{height:160px;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden;flex-shrink:0}
+.blog-card.featured .card-thumb{height:200px;font-size:64px}
+.card-thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(5,8,16,.5))}
+
+.featured-badge{position:absolute;top:12px;left:12px;z-index:1;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:.5px}
+
+.card-body{padding:20px;flex:1;display:flex;flex-direction:column}
+.card-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.card-tag{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:3px 10px;border-radius:4px}
+.card-date,.card-read{font-size:11px;color:var(--muted)}
+.card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.4}
+.blog-card.featured .card-title{font-size:18px}
+.card-desc{font-size:13px;color:var(--muted);line-height:1.6;flex:1}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.card-author{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.card-arrow{font-size:13px;color:var(--accent);font-weight:600;opacity:0;transform:translateX(-4px);transition:opacity .2s,transform .2s}
+.blog-card:hover .card-arrow{opacity:1;transform:translateX(0)}
+
+footer{padding:24px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted)}
+footer a{color:var(--accent)}
+
+@media(max-width:900px){
+  nav{padding:16px 20px}.nav-links{display:none}
+  .hero{padding:48px 20px 32px}.filters{padding:0 20px 24px}
+  .blog-grid{grid-template-columns:1fr;padding:0 20px 48px}
+  .blog-card.featured{grid-column:span 1}
+  footer{flex-direction:column;gap:8px;text-align:center;padding:20px}
+}
+@media(min-width:901px) and (max-width:1100px){
+  .blog-grid{grid-template-columns:repeat(2,1fr)}
+  .blog-card.featured{grid-column:span 2}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">AK</a>
+  <ul class="nav-links">
+    <li><a href="/#ai-models">AI Models</a></li>
+    <li><a href="/#skills">Skills</a></li>
+    <li><a href="/#experience">Experience</a></li>
+    <li><a href="/#oss">Open Source</a></li>
+    <li><a href="/blog/" class="active">Blog</a></li>
+    <li><a href="/#contact" class="nav-cta">Hire Me</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="section-tag">Writing</div>
+  <h1>My <span>Blog</span></h1>
+  <p>Thoughts on AI engineering, LLM systems, micro frontends, and full stack architecture — written from 10+ years of production experience.</p>
+</div>
+
+<div class="filters" id="filters">
+  <button class="filter-btn active" data-cat="all">All</button>
+  <button class="filter-btn" data-cat="ai">AI Engineering</button>
+  <button class="filter-btn" data-cat="frontend">Frontend</button>
+  <button class="filter-btn" data-cat="backend">Backend</button>
+  <button class="filter-btn" data-cat="llm">LLM</button>
+</div>
+
+<div class="blog-grid" id="blogGrid"></div>
+
+<footer>
+  <div>© 2025 Arun Kataria · <a href="/">Portfolio</a></div>
+  <div>Built with HTML · CSS · JS · Deployed on GitHub Pages</div>
+</footer>
+
+<script>
+const posts = [
+  {slug:'building-agentic-ai-with-claude',title:'Building Agentic AI Workflows with Anthropic Claude',desc:'How I designed autonomous multi-step tax-filing pipelines at Intuit using Claude Sonnet — architecture, prompt design, and lessons learned.',tag:'AI Engineering',tagColor:'#CC9B7A',date:'Dec 20, 2024',read:'7 min read',emoji:'🤖',bg:'linear-gradient(135deg,#1a0f2e,#2d1b4e)',featured:true,cat:'ai'},
+  {slug:'micro-frontend-at-scale',title:'Micro Frontend Architecture at Scale — Lessons from Intuit & OLX',desc:'What I learned leading micro frontend rollouts at two large product companies. Module federation, shared state, and team coordination.',tag:'Frontend',tagColor:'#61dafb',date:'Dec 12, 2024',read:'6 min read',emoji:'🏗️',bg:'linear-gradient(135deg,#0c1a2e,#0d3060)',featured:false,cat:'frontend'},
+  {slug:'llm-prompt-engineering-tips',title:'10 Prompt Engineering Tips for Production LLM Systems',desc:'Practical patterns for writing reliable, cost-efficient prompts for Claude and GPT-4 in real product environments.',tag:'LLM',tagColor:'#a78bfa',date:'Dec 5, 2024',read:'5 min read',emoji:'✍️',bg:'linear-gradient(135deg,#1a1030,#2e1d5a)',featured:false,cat:'llm'},
+  {slug:'java-spring-boot-21-features',title:'Java Spring Boot 21 — Features I Use Daily in Production',desc:'Virtual threads, structured concurrency, and pattern matching — a practical look at the best Spring Boot 21 features for microservices.',tag:'Backend',tagColor:'#77BC1F',date:'Nov 28, 2024',read:'8 min read',emoji:'☕',bg:'linear-gradient(135deg,#0a1a0a,#163016)',featured:false,cat:'backend'},
+];
+
+function render(filtered){
+  document.getElementById('blogGrid').innerHTML = filtered.map(p=>`
+    <a href="/blog/${p.slug}/" class="blog-card${p.featured?' featured':''}">
+      ${p.featured?'<div class="featured-badge">⭐ Featured</div>':''}
+      <div class="card-thumb" style="background:${p.bg}">${p.emoji}</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-tag" style="background:${p.tagColor}20;color:${p.tagColor}">${p.tag}</span>
+          <span class="card-date">📅 ${p.date}</span>
+          <span class="card-read">⏱ ${p.read}</span>
+        </div>
+        <div class="card-title">${p.title}</div>
+        <div class="card-desc">${p.desc}</div>
+        <div class="card-footer">
+          <div class="card-author"><div class="avatar">AK</div>Arun Kataria</div>
+          <span class="card-arrow">Read →</span>
+        </div>
+      </div>
+    </a>`).join('');
+}
+render(posts);
+
+document.getElementById('filters').addEventListener('click',e=>{
+  const btn = e.target.closest('.filter-btn');
+  if(!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const cat = btn.dataset.cat;
+  render(cat==='all' ? posts : posts.filter(p=>p.cat===cat));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Java Spring Boot 21 Features I Use Daily — Arun Kataria</title>
+<meta name="description" content="Virtual threads, structured concurrency, and pattern matching — a practical look at the best Spring Boot 21 features for microservices."/>
+<meta property="og:title" content="Java Spring Boot 21 Features I Use Daily in Production"/>
+<meta property="og:url" content="https://arunkataria.in/blog/java-spring-boot-21-features/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:author" content="Arun Kataria"/>
+<meta property="article:published_time" content="2024-11-28"/>
+<link rel="canonical" href="https://arunkataria.in/blog/java-spring-boot-21-features/"/>
+<meta name="theme-color" content="#050810"/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YZ8VKY1WNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-YZ8VKY1WNS');</script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#050810;--border:rgba(99,130,255,0.15);--accent:#6382ff;--accent2:#a78bfa;--cyan:#22d3ee;--green:#34d399;--text:#e8ecff;--muted:#7b84a3;--card:rgba(13,18,32,0.8)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--cyan));width:0%;z-index:999;transition:width .1s}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(5,8,16,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.5px;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);font-size:13px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff!important;padding:8px 20px;border-radius:6px;font-size:13px!important;font-weight:600!important;}
+.post-hero{background:linear-gradient(135deg,#0a1a0a,#163016);padding:64px 48px;text-align:center}
+.post-emoji{font-size:64px;margin-bottom:16px}
+.post-tag{display:inline-block;background:rgba(119,188,31,0.12);color:#77BC1F;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:4px 14px;border-radius:4px;margin-bottom:16px}
+.post-title{font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,40px);font-weight:800;letter-spacing:-1.5px;line-height:1.15;color:#f8fafc;max-width:720px;margin:0 auto 20px}
+.post-meta{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.author{display:flex;align-items:center;gap:8px}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.post-wrap{max-width:720px;margin:0 auto;padding:52px 24px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;margin-bottom:36px;transition:color .2s}
+.back-link:hover{color:var(--accent)}
+.post-wrap h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:#f8fafc;margin:40px 0 12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.post-wrap h3{font-size:17px;font-weight:600;color:var(--text);margin:28px 0 10px}
+.post-wrap p{color:#cbd5e1;margin-bottom:18px;font-size:15px;line-height:1.75}
+.post-wrap ul,.post-wrap ol{padding-left:22px;margin-bottom:18px;color:#cbd5e1;font-size:15px}
+.post-wrap li{margin-bottom:8px;line-height:1.7}
+.post-wrap strong{color:#f1f5f9}
+.callout{border-radius:10px;padding:16px 20px;margin:28px 0;font-size:14px;line-height:1.65}
+.callout.tip{background:rgba(99,130,255,0.08);border-left:3px solid var(--accent);color:#a5b4fc}
+.callout.success{background:rgba(52,211,153,0.08);border-left:3px solid var(--green);color:#6ee7b7}
+.callout.warning{background:rgba(251,191,36,0.08);border-left:3px solid #fbbf24;color:#fde68a}
+.callout strong{display:block;margin-bottom:6px;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+pre{background:rgba(13,18,32,0.95);border:1px solid var(--border);border-radius:10px;padding:20px;margin:24px 0;overflow-x:auto}
+code{font-family:'Courier New',monospace;font-size:13px;color:#86efac;line-height:1.6}
+p code,li code{background:rgba(13,18,32,0.9);color:#86efac;padding:2px 7px;border-radius:4px;font-size:13px}
+.table-wrap{overflow-x:auto;margin:28px 0;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:rgba(13,18,32,0.9);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;border-bottom:1px solid rgba(99,130,255,0.07);color:#cbd5e1}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(99,130,255,0.04)}
+.share-box{background:var(--card);border-radius:12px;padding:28px;margin:48px 0;border:1px solid var(--border);text-align:center}
+.share-box h3{font-family:'Syne',sans-serif;font-size:18px;margin-bottom:8px;color:#f8fafc}
+.share-box p{color:var(--muted);font-size:13px;margin-bottom:20px}
+.share-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.share-btn{padding:9px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:opacity .2s;font-family:'DM Sans',sans-serif}
+.share-btn:hover{opacity:.85}
+.related{margin-top:52px}
+.related h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#f8fafc;margin-bottom:18px;padding-bottom:0;border:none}
+.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.related-card{background:var(--card);border-radius:10px;padding:18px;border:1px solid var(--border);transition:border-color .2s,transform .2s;display:flex;flex-direction:column;gap:6px}
+.related-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.related-emoji{font-size:26px}
+.related-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.4}
+.related-read{font-size:11px;color:var(--muted)}
+footer{padding:24px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted)}
+footer a{color:var(--accent)}
+@media(max-width:768px){nav{padding:16px 20px}.nav-links{display:none}.post-hero{padding:48px 20px}.post-wrap{padding:36px 20px 60px}.related-grid{grid-template-columns:1fr}footer{flex-direction:column;gap:8px;text-align:center;padding:20px}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav>
+  <a class="nav-logo" href="/">AK</a>
+  <ul class="nav-links">
+    <li><a href="/#ai-models">AI Models</a></li>
+    <li><a href="/#skills">Skills</a></li>
+    <li><a href="/#experience">Experience</a></li>
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="/#contact" class="nav-cta">Hire Me</a></li>
+  </ul>
+</nav>
+
+<div class="post-hero">
+  <div class="post-emoji">☕</div>
+  <div class="post-tag">Backend</div>
+  <h1 class="post-title">Java Spring Boot 21 — Features I Use Daily in Production</h1>
+  <div class="post-meta">
+    <div class="author"><div class="avatar">AK</div>Arun Kataria</div>
+    <span>📅 November 28, 2024</span><span>⏱ 8 min read</span>
+  </div>
+</div>
+
+<div class="post-wrap">
+  <a class="back-link" href="/blog/">← Back to all posts</a>
+  <p>Java 21 is the most exciting Java release in years. Combined with Spring Boot 3.2+, it brings features that genuinely change how I write microservices — not just syntax sugar, but fundamental performance and design improvements.</p>
+  <p>Here are the features I actually use every day and why they matter.</p>
+
+  <div class="callout success"><strong>✅ What you'll learn</strong>Virtual threads and how they transformed our API throughput, pattern matching for cleaner domain logic, records for DTOs, sealed classes for error modelling, and structured concurrency for parallel LLM calls.</div>
+
+  <h2>1. Virtual Threads (Project Loom)</h2>
+  <p>This is the biggest one. Before virtual threads, a Spring Boot app under high load would exhaust its thread pool waiting on I/O (DB calls, HTTP requests). Virtual threads are lightweight — you can create millions of them without the overhead of platform threads.</p>
+  <p>Enabling them in Spring Boot 3.2 is just one config line:</p>
+  <pre><code># application.properties
+spring.threads.virtual.enabled=true</code></pre>
+  <p>The result in our loan eligibility API at Coforge: the same service handling 800 req/s scaled to <strong>4,200 req/s</strong> without any code changes. Just virtual threads.</p>
+
+  <div class="callout tip"><strong>💡 When NOT to use virtual threads</strong>CPU-bound tasks (heavy computation) don't benefit from virtual threads — they benefit from parallelism. Virtual threads shine for I/O-bound work: DB calls, HTTP calls, file reads.</div>
+
+  <h2>2. Pattern Matching for Switch</h2>
+  <p>Gone are the days of verbose <code>instanceof</code> chains. Pattern matching makes domain logic dramatically cleaner:</p>
+  <pre><code>// Old way
+String describe(Object obj) {
+  if (obj instanceof String s) return "String: " + s.length();
+  else if (obj instanceof Integer i) return "Int: " + i;
+  else return "Unknown";
+}
+
+// Java 21 — pattern matching switch
+String describe(Object obj) {
+  return switch (obj) {
+    case String s  -> "String of length " + s.length();
+    case Integer i -> "Integer: " + i;
+    case null      -> "null value";
+    default        -> "Unknown: " + obj.getClass().getSimpleName();
+  };
+}</code></pre>
+  <p>I use this constantly when handling different LLM response types, different event types in our event bus, and different error shapes from external APIs.</p>
+
+  <h2>3. Records for DTOs</h2>
+  <p>Records eliminate the boilerplate of DTO classes. Instead of a 40-line class with getters, setters, equals, hashCode, and toString, you get:</p>
+  <pre><code>// A complete, immutable DTO in one line
+public record TaxFilingRequest(
+  String userId,
+  int taxYear,
+  List&lt;String&gt; documentIds,
+  FilingStrategy strategy
+) {}
+
+// Works seamlessly with Jackson (Spring Boot)
+// Works with @Valid Bean Validation
+// Works with Spring Data projections</code></pre>
+
+  <h2>4. Sealed Classes for Error Modelling</h2>
+  <p>Sealed classes let you define a closed hierarchy of types — perfect for modelling API results and errors:</p>
+  <pre><code>public sealed interface FilingResult
+  permits FilingResult.Success, FilingResult.Failure, FilingResult.PendingReview {}
+
+public record Success(String confirmationId, LocalDate filedDate)
+  implements FilingResult {}
+
+public record Failure(String errorCode, String message)
+  implements FilingResult {}
+
+public record PendingReview(String reviewId, String reason)
+  implements FilingResult {}
+
+// At the call site — exhaustive switch, no default needed:
+String message = switch (result) {
+  case Success s       -> "Filed! Confirmation: " + s.confirmationId();
+  case Failure f       -> "Error: " + f.message();
+  case PendingReview p -> "Under review: " + p.reason();
+};</code></pre>
+
+  <h2>5. Structured Concurrency for Parallel LLM Calls</h2>
+  <p>When building the AI pipeline at Intuit, we needed to call multiple services in parallel and combine results. Structured concurrency (preview in Java 21) makes this clean and safe:</p>
+  <pre><code>try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+  Future&lt;UserDocuments&gt; docs    = scope.fork(() -> documentService.fetch(userId));
+  Future&lt;TaxHistory&gt;   history  = scope.fork(() -> taxService.getHistory(userId));
+  Future&lt;RiskProfile&gt;  risk     = scope.fork(() -> riskEngine.evaluate(userId));
+
+  scope.join().throwIfFailed();  // waits for all; cancels all if one fails
+
+  return new TaxContext(docs.get(), history.get(), risk.get());
+}</code></pre>
+  <p>Compare this to manually managing <code>CompletableFuture</code> chains — structured concurrency is both safer (automatic cancellation on failure) and more readable.</p>
+
+  <h2>Performance Impact Summary</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Feature</th><th>Impact</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td>Virtual Threads</td><td style="color:#34d399">5× throughput gain</td><td>I/O-bound microservices</td></tr>
+        <tr><td>Pattern Matching</td><td style="color:#34d399">~40% less boilerplate</td><td>Domain logic, event handling</td></tr>
+        <tr><td>Records</td><td style="color:#34d399">~80% less DTO code</td><td>API request/response DTOs</td></tr>
+        <tr><td>Sealed Classes</td><td style="color:#34d399">Compile-time exhaustiveness</td><td>Error modelling, result types</td></tr>
+        <tr><td>Structured Concurrency</td><td style="color:#34d399">Simpler parallel code</td><td>Multi-service aggregation</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warning"><strong>⚠️ Upgrade note</strong>Virtual threads and structured concurrency require Java 21. Make sure your Docker base image and CI environment are updated: <code>eclipse-temurin:21-jre-alpine</code> is a good starting point.</div>
+
+  <div class="share-box">
+    <h3>Found this useful?</h3>
+    <p>Share with your Java team 👇</p>
+    <div class="share-btns">
+      <button class="share-btn" style="background:#25d366;color:#fff" onclick="shareWA()">💬 WhatsApp</button>
+      <button class="share-btn" style="background:#1da1f2;color:#fff" onclick="shareTW()">🐦 Twitter</button>
+      <button class="share-btn" style="background:#0077b5;color:#fff" onclick="shareLI()">💼 LinkedIn</button>
+      <button class="share-btn" style="background:#334155;color:#e2e8f0" onclick="copyLink()">🔗 Copy Link</button>
+    </div>
+  </div>
+
+  <div class="related">
+    <h2>Related Posts</h2>
+    <div class="related-grid">
+      <a href="/blog/building-agentic-ai-with-claude/"><div class="related-card"><div class="related-emoji">🤖</div><div class="related-title">Building Agentic AI Workflows with Claude</div><div class="related-read">⏱ 7 min read</div></div></a>
+      <a href="/blog/llm-prompt-engineering-tips/"><div class="related-card"><div class="related-emoji">✍️</div><div class="related-title">10 Prompt Engineering Tips for LLMs</div><div class="related-read">⏱ 5 min read</div></div></a>
+      <a href="/blog/micro-frontend-at-scale/"><div class="related-card"><div class="related-emoji">🏗️</div><div class="related-title">Micro Frontend Architecture at Scale</div><div class="related-read">⏱ 6 min read</div></div></a>
+    </div>
+  </div>
+</div>
+<footer>
+  <div>© 2025 Arun Kataria · <a href="/">Portfolio</a> · <a href="/blog/">Blog</a></div>
+  <div>Built with HTML · CSS · JS · GitHub Pages</div>
+</footer>
+<script>
+window.addEventListener('scroll',()=>{const d=document.documentElement;document.getElementById('progress').style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+'%';});
+const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);
+function shareWA(){window.open('https://wa.me/?text='+t+'%20'+u,'_blank')}
+function shareTW(){window.open('https://twitter.com/intent/tweet?text='+t+'&url='+u,'_blank')}
+function shareLI(){window.open('https://www.linkedin.com/sharing/share-offsite/?url='+u,'_blank')}
+function copyLink(){navigator.clipboard.writeText(location.href);alert('Link copied!');}
+</script>
+</body>
+</html>
