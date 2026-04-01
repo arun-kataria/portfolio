@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI Models Comparison Guide: Which Model to Use for Which Scenario — Arun Kataria</title>
+<meta name="description" content="A practical comparison of top AI model types and leading models (Claude, GPT, Gemini, open-source LLMs), including usage scenarios and model selection guidance."/>
+<meta property="og:title" content="AI Models Comparison Guide: Which Model to Use for Which Scenario"/>
+<meta property="og:description" content="Compare AI model types, usage patterns, and pick the right model for coding, reasoning, summarization, agents, and cost-sensitive production workloads."/>
+<meta property="og:url" content="https://arunkataria.in/blog/ai-models-comparison-guide/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:author" content="Arun Kataria"/>
+<meta property="article:published_time" content="2026-04-01"/>
+<link rel="canonical" href="https://arunkataria.in/blog/ai-models-comparison-guide/"/>
+<meta name="theme-color" content="#050810"/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YZ8VKY1WNS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-YZ8VKY1WNS', { send_page_view: true, anonymize_ip: true });
+</script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#050810;--border:rgba(99,130,255,0.15);--accent:#6382ff;--accent2:#a78bfa;--cyan:#22d3ee;--green:#34d399;--text:#e8ecff;--muted:#7b84a3;--card:rgba(13,18,32,0.82)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7}
+a{text-decoration:none;color:inherit}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(5,8,16,0.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.5px;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);font-size:13px;font-weight:500;letter-spacing:.5px;text-transform:uppercase}
+.post-hero{background:linear-gradient(135deg,#0a1838,#1c2b57);padding:64px 48px;text-align:center}
+.post-emoji{font-size:60px;margin-bottom:14px}
+.post-tag{display:inline-block;background:rgba(34,211,238,0.12);color:var(--cyan);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 14px;border-radius:4px;margin-bottom:14px}
+.post-title{font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,40px);font-weight:800;letter-spacing:-1.2px;line-height:1.15;max-width:860px;margin:0 auto 16px}
+.post-meta{font-size:13px;color:var(--muted)}
+.post-wrap{max-width:860px;margin:0 auto;padding:52px 24px 80px}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;margin-bottom:28px}
+.post-wrap h2{font-family:'Syne',sans-serif;font-size:23px;margin:36px 0 10px;border-bottom:1px solid var(--border);padding-bottom:10px}
+.post-wrap p{color:#cbd5e1;margin-bottom:16px}
+.grid{display:grid;gap:14px}
+.grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
+.card h3{font-family:'Syne',sans-serif;font-size:16px;margin-bottom:8px}
+.card p{font-size:14px;color:var(--muted);margin-bottom:0}
+table{width:100%;border-collapse:collapse;margin:16px 0;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th,td{padding:12px;border-bottom:1px solid var(--border);text-align:left;font-size:14px;vertical-align:top}
+th{color:#f8fafc;background:rgba(99,130,255,0.1);font-weight:700}
+td{color:#cbd5e1}
+.pill{display:inline-block;padding:3px 8px;border-radius:100px;font-size:11px;background:rgba(99,130,255,0.14);color:#b7c2ff;margin-right:6px;margin-bottom:6px}
+.cta{background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-left:3px solid var(--green);border-radius:10px;padding:14px 16px;color:#9ff2d0;margin:22px 0}
+footer{padding:24px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted)}
+@media(max-width:900px){nav{padding:16px 20px}.nav-links{display:none}.post-hero{padding:48px 20px}.grid.cols-2{grid-template-columns:1fr}footer{padding:20px;flex-direction:column;gap:8px;text-align:center}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">AK</a>
+  <ul class="nav-links">
+    <li><a href="/#ai-models">AI Models</a></li>
+    <li><a href="/#skills">Skills</a></li>
+    <li><a href="/#experience">Experience</a></li>
+    <li><a href="/blog/">Blog</a></li>
+  </ul>
+</nav>
+
+<div class="post-hero">
+  <div class="post-emoji">🧠</div>
+  <div class="post-tag">AI Engineering</div>
+  <h1 class="post-title">AI Models Comparison Guide: Model Types, Use Cases, and Which Model Works Best for Each Scenario</h1>
+  <div class="post-meta">By Arun Kataria · Apr 1, 2026 · 9 min read</div>
+</div>
+
+<main class="post-wrap">
+  <a class="back-link" href="/blog/">← Back to Blog</a>
+
+  <p>Choosing the right AI model is less about picking the most hyped model and more about matching model strengths to your product requirement: latency, cost, reasoning quality, context length, tool usage, and domain fit.</p>
+
+  <h2>1) Different Types of AI Models</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>General-purpose LLMs</h3>
+      <p>Best for writing, summarization, Q&A, coding help, and broad reasoning tasks across domains.</p>
+    </div>
+    <div class="card">
+      <h3>Reasoning-focused Models</h3>
+      <p>Designed for deeper multi-step logic, planning, and complex problem decomposition.</p>
+    </div>
+    <div class="card">
+      <h3>Small / Fast Models</h3>
+      <p>Low latency and low cost for high-volume tasks like classification, extraction, and routing.</p>
+    </div>
+    <div class="card">
+      <h3>Multimodal Models</h3>
+      <p>Handle text + image (and sometimes audio/video) for OCR, vision Q&A, and document workflows.</p>
+    </div>
+  </div>
+
+  <h2>2) Model Comparison (Practical View)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Model Family</th>
+        <th>Best For</th>
+        <th>Watch-outs</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Claude</strong><br/><span class="pill">Long context</span><span class="pill">Structured outputs</span></td>
+        <td>Long-document analysis, policy/tax/legal drafting, tool-driven agents, safer enterprise assistants.</td>
+        <td>Can be conservative in uncertain prompts; tune with explicit output schema.</td>
+      </tr>
+      <tr>
+        <td><strong>GPT models</strong><br/><span class="pill">Coding</span><span class="pill">Ecosystem</span></td>
+        <td>Coding copilots, product assistants, function-calling pipelines, broad use cases with mature integrations.</td>
+        <td>Cost can rise quickly at scale without prompt/token optimization.</td>
+      </tr>
+      <tr>
+        <td><strong>Gemini models</strong><br/><span class="pill">Multimodal</span><span class="pill">Google stack</span></td>
+        <td>Multimodal analysis and teams already invested in Google Cloud/workspace tooling.</td>
+        <td>Model behavior can vary by variant; benchmark before switching in production.</td>
+      </tr>
+      <tr>
+        <td><strong>Open-source LLMs</strong><br/><span class="pill">Control</span><span class="pill">Self-hosting</span></td>
+        <td>Data-sensitive workloads, on-prem deployments, custom fine-tuning and cost control at scale.</td>
+        <td>Higher ops overhead (inference infra, monitoring, safety controls).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3) Which Model Is Good for Which Scenario?</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Scenario</th>
+        <th>Recommended Choice</th>
+        <th>Why</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Enterprise chatbot over internal docs</td>
+        <td>Claude / GPT + RAG</td>
+        <td>Strong instruction following, long context, and reliable answer formatting.</td>
+      </tr>
+      <tr>
+        <td>Code generation + code review assistant</td>
+        <td>GPT-class coding model + fallback small model</td>
+        <td>High coding quality with cost-efficient triage flow.</td>
+      </tr>
+      <tr>
+        <td>Invoice, PDF, and screenshot understanding</td>
+        <td>Gemini or multimodal GPT/Claude variant</td>
+        <td>Vision + text reasoning in one pipeline.</td>
+      </tr>
+      <tr>
+        <td>High-volume classification/routing</td>
+        <td>Small fast model (or distilled OSS model)</td>
+        <td>Best latency/cost for repetitive shallow tasks.</td>
+      </tr>
+      <tr>
+        <td>Regulated or private-data workflows</td>
+        <td>Open-source model (self-hosted) or enterprise-grade hosted model</td>
+        <td>Compliance, data governance, and controllable deployment.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4) A Production Selection Framework</h2>
+  <p>Use this sequence in real projects:</p>
+  <p><strong>Task clarity → Quality target → Latency SLO → Cost budget → Safety/compliance → Tooling fit.</strong></p>
+  <p>Then run an A/B benchmark with the same eval set across 2-3 models. Always test edge cases, hallucination rate, and JSON/tool-call stability before choosing a winner.</p>
+
+  <div class="cta">
+    <strong>Quick recommendation:</strong> Start with one premium model + one small fallback model. Use routing logic so only difficult prompts hit the expensive model.
+  </div>
+
+  <h2>5) Final Takeaway</h2>
+  <p>There is no universal “best model.” The best model is the one that meets your <strong>quality bar</strong> within your <strong>latency</strong>, <strong>cost</strong>, and <strong>compliance</strong> constraints for a specific user journey.</p>
+</main>
+
+<footer>
+  <div>© 2026 Arun Kataria · <a href="/">Portfolio</a></div>
+  <div>Built with HTML · CSS · JS · Deployed on GitHub Pages</div>
+</footer>
+</body>
+</html>

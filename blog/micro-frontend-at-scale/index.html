@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Micro Frontend Architecture at Scale — Arun Kataria</title>
-<meta name="description" content="What I learned leading micro frontend rollouts at Intuit and OLX. Module federation, shared state, and team coordination."/>
+<meta name="description" content="What I learned leading micro frontend. Module federation, shared state, and team coordination."/>
 <meta property="og:title" content="Micro Frontend Architecture at Scale"/>
 <meta property="og:url" content="https://arunkataria.in/blog/micro-frontend-at-scale/"/>
 <meta property="og:type" content="article"/>
@@ -118,7 +118,7 @@ footer a{color:var(--accent)}
 <div class="post-hero">
   <div class="post-emoji">🏗️</div>
   <div class="post-tag">Frontend</div>
-  <h1 class="post-title">Micro Frontend Architecture at Scale — Lessons from Intuit & OLX</h1>
+  <h1 class="post-title">Micro Frontend Architecture at Scale</h1>
   <div class="post-meta">
     <div class="author"><div class="avatar">AK</div>Arun Kataria</div>
     <span>📅 December 12, 2024</span><span>⏱ 6 min read</span>
@@ -128,13 +128,13 @@ footer a{color:var(--accent)}
 <div class="post-wrap">
   <a class="back-link" href="/blog/">← Back to all posts</a>
 
-  <p>I've led micro frontend migrations at two large product companies — Intuit (TurboTax/QuickBooks) and OLX Group. Both were complex, both had painful moments, and both taught me things I wish I'd known going in.</p>
+  <p>I've led micro frontend migrations at two large product companies. Both were complex, both had painful moments, and both taught me things I wish I'd known going in.</p>
   <p>This post covers the real challenges: module federation config, shared state pitfalls, team coordination, and what I'd do differently.</p>
 
   <div class="callout success"><strong>✅ What you'll learn</strong>Webpack Module Federation setup, shared state strategies across MFEs, avoiding version conflicts, deployment independence, and team ownership models.</div>
 
   <h2>Why Micro Frontends?</h2>
-  <p>At Intuit, TurboTax had a massive monolithic React app. 40+ engineers touching the same codebase meant slow builds (14 min), risky deployments, and feature teams blocked by each other constantly.</p>
+  <p>At organization with a massive monolithic React app. 40+ engineers touching the same codebase meant slow builds (14 min), risky deployments, and feature teams blocked by each other constantly.</p>
   <p>The goal was simple: <strong>let each team own, build, and deploy their slice of the UI independently.</strong></p>
 
   <h2>Module Federation — The Setup That Actually Works</h2>
@@ -142,8 +142,8 @@ footer a{color:var(--accent)}
 new ModuleFederationPlugin({
   name: 'host',
   remotes: {
-    taxWizard: 'taxWizard@https://cdn.intuit.com/tax-wizard/remoteEntry.js',
-    dashboard:  'dashboard@https://cdn.intuit.com/dashboard/remoteEntry.js',
+    taxWizard: 'taxWizard@https://cdn.xyz.com/tax-wizard/remoteEntry.js',
+    dashboard:  'dashboard@https://cdn.xyz.com/dashboard/remoteEntry.js',
   },
   shared: {
     react: { singleton: true, requiredVersion: '^18.0.0' },
